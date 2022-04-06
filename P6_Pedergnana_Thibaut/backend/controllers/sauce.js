@@ -13,23 +13,23 @@ exports.getOne = (req, res, next) => {
 };
 
 exports.create = (req, res, next) => {
-  const { userId } = req.auth;
-  const sauceObject = req.body;
+  const sauce = JSON.parse(req.body.sauce);
 
   if (!req.file) {
     //422 unprocessable entity => données incompletes
     res.status(422).json({ error: "imageUrl is required" });
   }
-
-  const sauce = new Sauce({
-    ...sauceObject,
-    imageUrl: ```${req.protocol}://${req.get("host")}/images/${
+  console.log(
+    `${req.protocol}://${req.get("host")}/images/${req.file.filename}`
+  );
+  const newSauce = new Sauce({
+    ...sauce,
+    imageUrl: `${req.protocol}://${req.get("host")}/images/${
       req.file.filename
-    }```,
-    userId: userId,
+    }`,
   });
 
-  sauce
+  newSauce
     .save()
     .then((obj) => res.status(201).json(obj))
     .catch((error) => res.status(400).json({ error }));
